@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>100 treningów do Gothic 2027</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Metamorphous&family=IM+Fell+English:ital@0;1&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pit:#12100d;        /* dno kopalni */
+  --stone:#1c1a16;      /* kamien Starego Obozu */
+  --stone2:#262319;
+  --iron:#3a352a;       /* okucia */
+  --ore:#c08b3e;        /* bryla rudy */
+  --ore-dim:#7d5a28;
+  --torch:#d9762f;      /* pochodnie */
+  --swamp:#5d6b3f;      /* Bagienne Ziele */
+  --barrier:#8f6fc4;    /* Bariera */
+  --barrier-dim:#5a4580;
+  --blood:#8c3b2e;
+  --parch:#ddd2b8;
+  --ash:#8e8674;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--pit);color:var(--parch);
+  font:15px/1.6 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(143,111,196,.10), transparent 70%),
+    radial-gradient(ellipse 60% 40% at 50% 110%, rgba(217,118,47,.06), transparent 70%);
+  background-attachment:fixed;
+}
+.wrap{max-width:1200px;margin:0 auto;padding:0 20px 90px}
+
+/* ---------- Bariera: element sygnaturowy ---------- */
+.barrier{position:relative;height:132px;margin:0 -20px 4px;overflow:hidden}
+.barrier svg{position:absolute;inset:0;width:100%;height:100%}
+.dome{fill:none;stroke:var(--barrier);stroke-width:1.4;opacity:.5}
+.dome2{fill:none;stroke:var(--barrier);stroke-width:.7;opacity:.22}
+@keyframes shimmer{0%,100%{opacity:.5}50%{opacity:.85}}
+.dome{animation:shimmer 6s ease-in-out infinite}
+
+header{padding-top:6px;border-bottom:1px solid var(--iron);padding-bottom:24px;margin-bottom:28px}
+.eyebrow{font:400 12px 'IM Fell English',serif;font-style:italic;color:var(--barrier);
+  letter-spacing:.12em;margin-bottom:6px}
+h1{font:400 clamp(30px,5.4vw,54px)/1.02 Metamorphous,serif;margin:0 0 10px;
+  letter-spacing:.005em;text-shadow:0 0 26px rgba(192,139,62,.16)}
+h1 em{font-style:normal;color:var(--ore)}
+.sub{color:var(--ash);font:13px 'JetBrains Mono',monospace;letter-spacing:.02em}
+
+/* ---------- statystyki ---------- */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));
+  gap:1px;background:var(--iron);border:1px solid var(--iron);margin:24px 0 30px}
+.stat{background:var(--stone);padding:15px 16px;position:relative}
+.stat b{display:block;font:600 27px/1.1 'JetBrains Mono',monospace;color:var(--ore)}
+.stat span{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--ash)}
+
+/* ---------- sterowanie ---------- */
+.controls{display:flex;flex-wrap:wrap;gap:9px;align-items:center;margin-bottom:14px}
+button{background:var(--stone2);color:var(--parch);border:1px solid var(--iron);
+  padding:7px 14px;font:500 13px Inter,sans-serif;cursor:pointer;border-radius:1px;
+  transition:border-color .15s,background .15s}
+button:hover{border-color:var(--ore-dim)}
+button.on{background:var(--ore-dim);border-color:var(--ore);color:#15120c}
+button:focus-visible{outline:2px solid var(--barrier);outline-offset:2px}
+input[type=search]{background:var(--stone2);border:1px solid var(--iron);color:var(--parch);
+  padding:7px 12px;font:13px Inter,sans-serif;border-radius:1px;min-width:160px}
+input[type=search]:focus-visible{outline:2px solid var(--barrier);outline-offset:1px}
+
+.scrub{display:flex;align-items:center;gap:13px;margin:14px 0 8px;
+  background:var(--stone);border:1px solid var(--iron);padding:12px 15px;flex-wrap:wrap}
+.scrub label{font:11px Inter,sans-serif;color:var(--ash);text-transform:uppercase;letter-spacing:.08em}
+.scrub input[type=range]{flex:1;min-width:180px;accent-color:var(--ore)}
+.scrub output{font:600 13px 'JetBrains Mono',monospace;color:var(--ore);min-width:92px}
+
+/* ---------- wykres ---------- */
+.chart{position:relative;background:var(--stone);border:1px solid var(--iron);padding:8px}
+svg#svg{display:block;width:100%;height:auto;touch-action:pan-y}
+.line{fill:none;stroke-width:1.7;stroke-linejoin:round;transition:opacity .15s,stroke-width .15s}
+.line.dim{opacity:.11}
+.line.hot{stroke-width:3.5}
+.grid{stroke:var(--iron);stroke-width:1}
+.axis{fill:var(--ash);font:11px 'JetBrains Mono',monospace}
+.ideal{stroke:var(--ore-dim);stroke-width:1.3;stroke-dasharray:6 5;fill:none;opacity:.7}
+.dl{stroke:var(--barrier);stroke-width:1.7;stroke-dasharray:4 4;opacity:.9}
+
+#tip{position:absolute;pointer-events:none;background:#0b0a08;border:1px solid var(--ore-dim);
+  padding:8px 11px;font:12px/1.5 'JetBrains Mono',monospace;opacity:0;transition:opacity .12s;
+  border-radius:1px;white-space:nowrap;z-index:5;box-shadow:0 4px 20px rgba(0,0,0,.6)}
+#tip b{color:var(--ore);font-size:12.5px}
+#tip i{color:var(--ash);font-style:normal}
+
+/* ---------- kroniki ukonczonych ---------- */
+h2{font:400 22px Metamorphous,serif;margin:44px 0 4px;color:var(--parch)}
+.h2sub{color:var(--ash);font:italic 13px 'IM Fell English',serif;margin:0 0 18px}
+.roll{display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:1px;
+  background:var(--iron);border:1px solid var(--iron)}
+.card{background:var(--stone);padding:14px 15px;position:relative;overflow:hidden}
+.card::after{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--ore)}
+.card .who{font:600 14.5px Inter,sans-serif;margin-bottom:9px;padding-left:6px}
+.card .big{font:600 25px/1 'JetBrains Mono',monospace;color:var(--ore);padding-left:6px}
+.card .big small{font-size:12px;color:var(--ash);font-weight:400;margin-left:3px}
+.card .meta{font:11.5px/1.7 'JetBrains Mono',monospace;color:var(--ash);
+  margin-top:9px;padding-left:6px}
+.card .pace{color:var(--swamp);font-weight:600}
+.rankmark{position:absolute;right:11px;top:11px;font:400 12px Metamorphous,serif;color:var(--ore-dim)}
+
+.camps{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:1px;
+  background:var(--iron);border:1px solid var(--iron);margin-bottom:8px}
+.camp{background:var(--stone);padding:15px 16px;position:relative}
+.camp::after{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--cc)}
+.camp .cn{font:400 17px Metamorphous,serif;color:var(--cc);margin-bottom:9px;padding-left:7px}
+.camp .cs{font:600 24px/1 'JetBrains Mono',monospace;padding-left:7px}
+.camp .cs small{font:400 12px Inter,sans-serif;color:var(--ash);margin-left:5px}
+.camp .cm{font:11.5px/1.7 'JetBrains Mono',monospace;color:var(--ash);margin-top:8px;padding-left:7px}
+.tag{display:inline-block;font-size:10.5px;letter-spacing:.05em;padding:1px 6px;
+  border:1px solid var(--iron);color:var(--ash);white-space:nowrap}
+
+/* ---------- tabela ---------- */
+table{width:100%;border-collapse:collapse;margin-top:16px;font-size:13.5px}
+th{text-align:left;padding:10px;border-bottom:1px solid var(--iron);
+  font:600 11px Inter,sans-serif;text-transform:uppercase;letter-spacing:.07em;
+  color:var(--ash);cursor:pointer;user-select:none;white-space:nowrap}
+th:hover{color:var(--parch)}
+th[aria-sort]{color:var(--ore)}
+td{padding:9px 10px;border-bottom:1px solid #232019}
+tr.row{cursor:pointer}
+tr.row:hover td{background:#2b2719}
+tr.row.mute{opacity:.32}
+.mono{font-family:'JetBrains Mono',monospace}
+.swatch{display:inline-block;width:9px;height:9px;margin-right:9px;vertical-align:baseline}
+.barwrap{display:flex;align-items:center;gap:5px;min-width:74px}
+.bar{height:5px;background:var(--iron);position:relative;flex:1;min-width:60px}
+.bar i{position:absolute;inset:0 auto 0 0;background:var(--swamp)}
+.bar i.full{background:var(--ore)}
+.over{width:5px;height:5px;background:var(--barrier);flex:0 0 auto;
+  clip-path:polygon(0 0,100% 50%,0 100%)}
+.plus{font:600 10.5px 'JetBrains Mono',monospace;color:var(--barrier);margin-left:7px;
+  vertical-align:1px}
+.done{color:var(--ore)}
+
+.note{color:var(--ash);font-size:12.5px;margin-top:30px;line-height:1.75;
+  border-top:1px solid var(--iron);padding-top:18px}
+.note b{color:var(--parch)}
+.note .mono{color:var(--ore-dim)}
+
+@media (max-width:680px){
+  .hide-s{display:none}
+  .wrap{padding:0 12px 60px}
+  .barrier{height:96px;margin:0 -12px 4px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="barrier" aria-hidden="true">
+  <svg viewBox="0 0 1200 132" preserveAspectRatio="none">
+    <path class="dome2" d="M-40,132 Q600,-46 1240,132"/>
+    <path class="dome"  d="M-40,132 Q600,-26 1240,132"/>
+    <path class="dome2" d="M-40,132 Q600,-6 1240,132"/>
+  </svg>
+</div>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow" id="edycja"></div>
+  <h1>100 treningów do <em>Gothic 2027</em></h1>
+  <div class="sub" id="okres"></div>
+</header>
+
+<div class="stats" id="stats"></div>
+
+<div class="controls">
+  <button data-f="all" class="on">Wszyscy</button>
+  <button data-f="done" class="tylko-meta">Wolni górnicy</button>
+  <button data-f="close" class="tylko-meta">U bram (85+)</button>
+  <button data-f="active">Aktywni (30 dni)</button>
+  <button data-f="Stary Obóz">Stary Obóz</button>
+  <button data-f="Nowy Obóz">Nowy Obóz</button>
+  <button data-f="Bractwo">Bractwo</button>
+  <button data-f="Skazańcy">Skazańcy</button>
+  <input type="search" id="szukaj" placeholder="szukaj osoby…" aria-label="Szukaj osoby">
+</div>
+
+<div class="controls" id="zakresy">
+  <button data-z="dotychczas" class="on">Dotychczas</button>
+  <button data-z="rok">Cały challenge</button>
+</div>
+
+<div class="scrub">
+  <label for="dzien">Stan na dzień</label>
+  <input type="range" id="dzien" min="0" step="1" value="0" aria-label="Wybierz dzień">
+  <output id="dataOut"></output>
+</div>
+
+<div class="chart">
+  <svg id="svg" viewBox="0 0 1000 520" role="img" aria-label="Wykres postępu uczestników w czasie"></svg>
+  <div id="tip"></div>
+</div>
+
+<h2>Obozy</h2>
+<p class="h2sub">Suma treningów i średnia na osobę. Przynależność wzięta z ról na serwerze.</p>
+<div class="camps" id="camps"></div>
+
+<h2 class="tylko-meta">Kroniki wyzwolonych</h2>
+<p class="h2sub tylko-meta">Ci, którzy dobili setki — i ile dni zajęła im droga od pierwszego treningu do ostatniego.</p>
+<div class="roll tylko-meta" id="roll"></div>
+
+<h2>Pełna lista</h2>
+<p class="h2sub">Kliknij nagłówek, żeby posortować. Najedź na wiersz, żeby podświetlić linię na wykresie.</p>
+<table>
+  <thead><tr>
+    <th data-s="t">Wynik</th>
+    <th data-s="n">Osoba</th>
+    <th class="hide-s">Postęp</th>
+    <th data-s="o" class="hide-s">Obóz</th>
+    <th data-s="s" class="hide-s">Pierwszy</th>
+    <th data-s="dni" class="hide-s tylko-meta">Dni do setki</th>
+    <th data-s="d" class="hide-s tylko-meta">Data setki</th>
+    <th data-s="l" class="hide-s">Ostatni wpis</th>
+  </tr></thead>
+  <tbody id="tbody"></tbody>
+</table>
+
+<p class="note" id="note"></p>
+</div>
+
+<script>
+const D = {"meta": {"start": "2026-08-23", "deadline": "2027-08-18", "today": "2026-09-19", "rok": 2027, "etykieta": "18-22.08", "edycja": "rok drugi", "pewna": false, "uplynelo": 27, "dni": 360, "zostalo": 333, "msgs": 461, "ludzi": 40, "meta_ilu": 0}, "gracze": [{"n": "Ulryk", "t": 19, "d": null, "l": "2026-09-12", "s": "2026-08-25", "o": "Nowy Obóz", "dni": null, "p": [[2, 1], [3, 2], [4, 3], [5, 4], [6, 5], [7, 6], [8, 7], [9, 8], [10, 9], [11, 10], [12, 11], [13, 12], [14, 13], [15, 14], [16, 15], [17, 16], [19, 17], [20, 18], [20, 19]]}, {"n": "Karaluch", "t": 18, "d": null, "l": "2026-09-19", "s": "2026-08-23", "o": "Stary Obóz", "dni": null, "p": [[0, 1], [2, 2], [3, 3], [5, 4], [6, 5], [7, 6], [9, 7], [10, 8], [13, 9], [13, 10], [13, 11], [14, 12], [14, 13], [18, 14], [25, 15], [26, 16], [27, 17], [27, 18]]}, {"n": "Marko [Karaś]", "t": 15, "d": null, "l": "2026-09-19", "s": "2026-08-24", "o": "Stary Obóz", "dni": null, "p": [[1, 1], [2, 2], [4, 3], [5, 4], [6, 5], [9, 6], [11, 7], [13, 8], [15, 9], [18, 10], [18, 11], [22, 12], [25, 13], [25, 14], [27, 15]]}, {"n": "Czapa", "t": 14, "d": null, "l": "2026-09-15", "s": "2026-08-24", "o": "Stary Obóz", "dni": null, "p": [[1, 1], [3, 2], [9, 3], [11, 4], [12, 5], [14, 6], [16, 7], [17, 8], [18, 9], [19, 10], [21, 11], [21, 12], [22, 13], [23, 14]]}, {"n": "Morrigan", "t": 14, "d": null, "l": "2026-09-18", "s": "2026-08-25", "o": "Stary Obóz", "dni": null, "p": [[2, 1], [3, 2], [4, 3], [6, 4], [9, 5], [12, 6], [15, 7], [17, 8], [18, 9], [19, 10], [22, 11], [24, 12], [25, 13], [26, 14]]}, {"n": "Szpilka", "t": 14, "d": null, "l": "2026-09-18", "s": "2026-08-30", "o": "Nowy Obóz", "dni": null, "p": [[7, 1], [8, 2], [9, 3], [10, 4], [11, 5], [12, 6], [13, 7], [14, 8], [15, 9], [16, 10], [22, 11], [23, 12], [26, 13], [26, 14]]}, {"n": "Rzepa", "t": 13, "d": null, "l": "2026-09-18", "s": "2026-08-28", "o": "Skazańcy", "dni": null, "p": [[5, 1], [6, 2], [7, 3], [8, 4], [9, 5], [11, 6], [15, 7], [16, 8], [18, 9], [19, 10], [23, 11], [25, 12], [26, 13]]}, {"n": "Vigdis", "t": 11, "d": null, "l": "2026-09-16", "s": "2026-08-29", "o": "Nowy Obóz", "dni": null, "p": [[6, 1], [8, 2], [10, 3], [11, 4], [12, 5], [14, 6], [16, 7], [21, 8], [21, 9], [22, 10], [24, 11]]}, {"n": "Latro (Admat)", "t": 11, "d": null, "l": "2026-09-17", "s": "2026-08-25", "o": "Stary Obóz", "dni": null, "p": [[2, 1], [3, 2], [5, 3], [8, 4], [11, 5], [13, 6], [17, 7], [19, 8], [20, 9], [23, 10], [25, 11]]}, {"n": "Nowicjusz Migdał (Orzech)", "t": 10, "d": null, "l": "2026-09-17", "s": "2026-08-31", "o": "Bractwo", "dni": null, "p": [[8, 1], [9, 2], [11, 3], [16, 4], [16, 5], [18, 6], [19, 7], [21, 8], [23, 9], [25, 10]]}, {"n": "Grzebor", "t": 10, "d": null, "l": "2026-09-19", "s": "2026-08-26", "o": "Stary Obóz", "dni": null, "p": [[3, 1], [7, 2], [10, 3], [12, 4], [12, 5], [16, 6], [16, 7], [20, 8], [25, 9], [27, 10]]}, {"n": "Baal Torias", "t": 9, "d": null, "l": "2026-09-14", "s": "2026-08-26", "o": "Bractwo", "dni": null, "p": [[3, 1], [4, 2], [7, 3], [8, 4], [10, 5], [16, 6], [17, 7], [19, 8], [22, 9]]}, {"n": "Duży (trup)", "t": 9, "d": null, "l": "2026-09-15", "s": "2026-08-25", "o": "Stary Obóz", "dni": null, "p": [[2, 1], [4, 2], [7, 3], [12, 4], [14, 5], [16, 6], [21, 7], [22, 8], [23, 9]]}, {"n": "Malutki", "t": 8, "d": null, "l": "2026-09-09", "s": "2026-08-27", "o": "Stary Obóz", "dni": null, "p": [[4, 1], [5, 2], [6, 3], [11, 4], [11, 5], [13, 6], [15, 7], [17, 8]]}, {"n": "Igła", "t": 8, "d": null, "l": "2026-09-15", "s": "2026-08-24", "o": "Stary Obóz", "dni": null, "p": [[1, 1], [5, 2], [9, 3], [16, 4], [19, 5], [19, 6], [20, 7], [23, 8]]}, {"n": "Jaśmin", "t": 8, "d": null, "l": "2026-09-19", "s": "2026-08-29", "o": "Bez frakcji", "dni": null, "p": [[6, 2], [11, 3], [21, 4], [21, 5], [21, 6], [27, 7], [27, 8]]}, {"n": "Raynar(Paluch)", "t": 7, "d": null, "l": "2026-09-03", "s": "2026-08-25", "o": "Stary Obóz", "dni": null, "p": [[2, 1], [3, 2], [4, 3], [8, 4], [9, 5], [10, 6], [11, 7]]}, {"n": "Oriana \"Hiena\"", "t": 7, "d": null, "l": "2026-09-10", "s": "2026-08-26", "o": "Bez frakcji", "dni": null, "p": [[3, 1], [8, 2], [10, 3], [12, 4], [13, 5], [17, 6], [18, 7]]}, {"n": "Hugon, zwany Jeżem", "t": 7, "d": null, "l": "2026-09-14", "s": "2026-08-26", "o": "Stary Obóz", "dni": null, "p": [[3, 1], [6, 2], [10, 3], [13, 4], [15, 5], [16, 6], [22, 7]]}, {"n": "Szrama", "t": 7, "d": null, "l": "2026-09-18", "s": "2026-08-27", "o": "Skazańcy", "dni": null, "p": [[4, 1], [11, 2], [11, 3], [17, 4], [26, 5], [26, 6], [26, 7]]}, {"n": "Zołza", "t": 7, "d": null, "l": "2026-09-19", "s": "2026-08-26", "o": "Skazańcy", "dni": null, "p": [[3, 1], [4, 2], [7, 3], [12, 4], [13, 5], [17, 6], [27, 7]]}, {"n": "Karat/Joachim", "t": 7, "d": null, "l": "2026-09-19", "s": "2026-08-30", "o": "Stary Obóz", "dni": null, "p": [[7, 1], [8, 2], [15, 3], [15, 4], [20, 5], [27, 7]]}, {"n": "Raisa", "t": 6, "d": null, "l": "2026-09-03", "s": "2026-08-27", "o": "Nowy Obóz", "dni": null, "p": [[4, 1], [5, 2], [7, 3], [9, 5], [11, 6]]}, {"n": "Beza aka Lukrecja", "t": 6, "d": null, "l": "2026-09-15", "s": "2026-08-25", "o": "Stary Obóz", "dni": null, "p": [[2, 1], [3, 2], [6, 3], [9, 4], [11, 5], [23, 6]]}, {"n": "Mecenas / Mała Ryba", "t": 6, "d": null, "l": "2026-09-18", "s": "2026-08-31", "o": "Nowy Obóz", "dni": null, "p": [[8, 1], [9, 2], [10, 3], [15, 4], [21, 5], [26, 6]]}, {"n": "Robal", "t": 6, "d": null, "l": "2026-09-19", "s": "2026-08-27", "o": "Bez frakcji", "dni": null, "p": [[4, 1], [14, 2], [21, 3], [24, 4], [25, 5], [27, 6]]}, {"n": "Dorry", "t": 5, "d": null, "l": "2026-09-16", "s": "2026-08-31", "o": "Nowy Obóz", "dni": null, "p": [[8, 1], [13, 2], [18, 3], [22, 4], [24, 5]]}, {"n": "Gondor", "t": 4, "d": null, "l": "2026-09-11", "s": "2026-08-23", "o": "Stary Obóz", "dni": null, "p": [[0, 1], [15, 2], [17, 3], [19, 4]]}, {"n": "martwy Rudzik (martwy Roivet)", "t": 3, "d": null, "l": "2026-08-31", "s": "2026-08-26", "o": "Stary Obóz", "dni": null, "p": [[3, 1], [4, 2], [8, 3]]}, {"n": "Jagoda", "t": 3, "d": null, "l": "2026-09-06", "s": "2026-08-27", "o": "Nowy Obóz", "dni": null, "p": [[4, 1], [7, 2], [14, 3]]}, {"n": "Lydia", "t": 3, "d": null, "l": "2026-09-10", "s": "2026-08-31", "o": "Nowy Obóz", "dni": null, "p": [[8, 1], [9, 2], [18, 3]]}, {"n": "Harpi", "t": 3, "d": null, "l": "2026-09-18", "s": "2026-09-10", "o": "Stary Obóz", "dni": null, "p": [[18, 1], [22, 2], [26, 3]]}, {"n": "Ziółko", "t": 2, "d": null, "l": "2026-09-07", "s": "2026-08-25", "o": "Stary Obóz", "dni": null, "p": [[2, 1], [15, 2]]}, {"n": "Nowicjusz Beatos", "t": 2, "d": null, "l": "2026-09-07", "s": "2026-09-02", "o": "Bractwo", "dni": null, "p": [[10, 1], [15, 2]]}, {"n": "Tarcza", "t": 2, "d": null, "l": "2026-09-11", "s": "2026-08-27", "o": "Nowy Obóz", "dni": null, "p": [[4, 1], [19, 2]]}, {"n": "Dalia", "t": 2, "d": null, "l": "2026-09-16", "s": "2026-09-03", "o": "Nowy Obóz", "dni": null, "p": [[11, 1], [24, 2]]}, {"n": "Cyra", "t": 1, "d": null, "l": "2026-08-30", "s": "2026-08-30", "o": "Stary Obóz", "dni": null, "p": [[7, 1]]}, {"n": "Brat Sebastian", "t": 1, "d": null, "l": "2026-09-02", "s": "2026-09-02", "o": "Stary Obóz", "dni": null, "p": [[10, 1]]}, {"n": "Chudy", "t": 1, "d": null, "l": "2026-09-06", "s": "2026-09-06", "o": "Stary Obóz", "dni": null, "p": [[14, 1]]}, {"n": "Brat Zwój (dawniej Nabiał)", "t": 1, "d": null, "l": "2026-09-17", "s": "2026-09-17", "o": "Skazańcy", "dni": null, "p": [[25, 1]]}]};
+const G = D.gracze, M = D.meta;
+const SVG = document.getElementById('svg'), TIP = document.getElementById('tip');
+const W=1000, H=520, PL=44, PR=128, PT=18, PB=38;
+const DNI = M.dni;
+
+// kolory obozow (barwy z gry: Stary = rudy/krwisty, Nowy = bagienna zielen, Bractwo = ognisty zloty)
+const OB={'Stary Obóz':'#b0472f','Nowy Obóz':'#6b8446','Bractwo':'#c9942f',
+          'Skazańcy':'#8f6fc4','Bez frakcji':'#7a7566'};
+// odcien per osoba w obrebie obozu, zeby linie dalo sie odroznic
+const licz={};
+G.forEach(g=>{
+  const b=OB[g.o]||OB['Bez frakcji'];
+  const i=(licz[g.o]=(licz[g.o]||0)+1)-1;
+  const m=b.match(/\w\w/g).map(x=>parseInt(x,16));
+  const f=1+((i%5)-2)*0.16;
+  g.c='#'+m.map(v=>Math.max(0,Math.min(255,Math.round(v*f))).toString(16).padStart(2,'0')).join('');
+});
+const MAXW=Math.max(...G.map(g=>g.t),1);
+const UPLYW=Math.max(1,M.uplynelo);
+// data sprzed 30 dni - dla filtra "Aktywni"
+const OSTATNIE30=(()=>{const d=new Date(M.today);d.setDate(d.getDate()-30);
+  return d.toISOString().slice(0,10);})();
+
+let zakres = (UPLYW < DNI*0.6) ? 'dotychczas' : 'rok';
+// Wczesnie w challengeu caly rok sciska dane w lewy rog, wiec domyslnie
+// pokazujemy przebyty odcinek i skalujemy os Y do realnych wynikow.
+let XMAX, TOP;
+function skala(){
+  XMAX = zakres==='rok' ? DNI : Math.min(DNI, Math.max(14, Math.round(UPLYW*1.08)));
+  TOP  = zakres==='rok' ? Math.max(100, Math.ceil(MAXW/20)*20)
+                        : Math.max(10,  Math.ceil(Math.max(MAXW,
+                            XMAX/DNI*100)*1.15/5)*5);
+}
+skala();
+
+const X = d => PL + d/XMAX*(W-PL-PR);
+const Y = v => H-PB - v/TOP*(H-PT-PB);
+const MIES=['sty','lut','mar','kwi','maj','cze','lip','sie','wrz','paź','lis','gru'];
+
+let filtr='all', szukaj='', hot=null, dzien=UPLYW, sortKey='t', sortDir=-1;
+// sekcje i kolumny dotyczace ukonczonych pokazujemy dopiero, gdy ktos dobije setki
+let SA_META=false;
+function metaWidocznosc(){
+  document.querySelectorAll('.tylko-meta').forEach(e=>e.hidden=!SA_META);
+}
+
+function widoczni(){
+  return G.filter(g=>{
+    if(szukaj && !g.n.toLowerCase().includes(szukaj)) return false;
+    if(filtr==='done')   return g.t>=100;
+    if(filtr==='close')  return g.t>=85;
+    if(filtr==='active') return g.l>=OSTATNIE30;
+    if(OB[filtr]!==undefined) return g.o===filtr;
+    return true;
+  });
+}
+function stan(g,d){ let v=0; for(const [x,n] of g.p){ if(x<=d) v=n; else break; } return v; }
+
+function rysuj(){
+  const vis=new Set(widoczni().map(g=>g.n));
+  let s='';
+  // os Y - krok dobrany do zakresu
+  const krokY = TOP<=30?5 : TOP<=60?10 : 20;
+  for(let v=0;v<=TOP;v+=krokY){
+    s+=`<line class="grid" x1="${PL}" y1="${Y(v)}" x2="${W-PR}" y2="${Y(v)}"/>`;
+    s+=`<text class="axis" x="${PL-9}" y="${Y(v)+4}" text-anchor="end">${v}</text>`;
+  }
+  if(TOP>=100){
+    s+=`<line x1="${PL}" y1="${Y(100)}" x2="${W-PR}" y2="${Y(100)}" stroke="#c08b3e" stroke-width="1.2" opacity=".55"/>`;
+    s+=`<text class="axis" x="${PL+6}" y="${Y(100)-6}" fill="#c08b3e" font-size="10">setka</text>`;
+  }
+  // os X - tygodnie przy krotkim zakresie, miesiace przy dlugim
+  const d0=new Date(M.start);
+  if(XMAX<=84){
+    for(let off=0;off<=XMAX;off+=7){
+      const dt=new Date(d0); dt.setDate(dt.getDate()+off);
+      s+=`<line class="grid" x1="${X(off)}" y1="${PT}" x2="${X(off)}" y2="${H-PB}" opacity=".3"/>`;
+      s+=`<text class="axis" x="${X(off)}" y="${H-PB+16}" text-anchor="middle">${dt.getDate()}.${dt.getMonth()+1}</text>`;
+    }
+  } else {
+    for(let i=0;i<=12;i++){
+      const dt=new Date(d0.getFullYear(),d0.getMonth()+i+1,1);
+      const off=Math.round((dt-d0)/864e5);
+      if(off<0||off>XMAX) continue;
+      s+=`<line class="grid" x1="${X(off)}" y1="${PT}" x2="${X(off)}" y2="${H-PB}" opacity=".38"/>`;
+      s+=`<text class="axis" x="${X(off)}" y="${H-PB+16}" text-anchor="middle">${MIES[dt.getMonth()]}</text>`;
+    }
+  }
+  // tempo idealne - ta sama prosta, przyciete do widocznego zakresu
+  const kx=Math.min(XMAX,DNI);
+  s+=`<path class="ideal" d="M${X(0)},${Y(0)} L${X(kx)},${Y(kx/DNI*100)}"/>`;
+  s+=`<text class="axis" x="${X(kx*0.55)}" y="${Y(kx*0.55/DNI*100)-8}" fill="#7d5a28" font-size="10">tempo idealne</text>`;
+  if(XMAX>=DNI){
+    s+=`<line class="dl" x1="${X(DNI)}" y1="${PT}" x2="${X(DNI)}" y2="${H-PB}"/>`;
+    s+=`<text class="axis" x="${X(DNI)-7}" y="${PT+12}" text-anchor="end" fill="#8f6fc4">${
+      M.etykieta} · Bariera pada${M.pewna?'':' (orientacyjnie)'}</text>`;
+  }
+
+  // etykiety tylko dla czolowki widocznych - inaczej robi sie tlok
+  const prog=[...widoczni()].map(g=>stan(g,dzien)).sort((a,b)=>b-a)[11] ?? 0;
+  const etyk=[];
+  for(const g of [...G].sort((a,b)=>a.t-b.t)){
+    const pts=g.p.filter(p=>p[0]<=dzien);
+    if(!pts.length) continue;
+    let d=`M${X(0)},${Y(0)}`, py=0;
+    for(const [x,n] of pts){ d+=` L${X(x)},${Y(py)} L${X(x)},${Y(n)}`; py=n; }
+    d+=` L${X(Math.min(dzien,XMAX))},${Y(py)}`;
+    const on=vis.has(g.n), h=hot===g.n;
+    s+=`<path class="line${on?'':' dim'}${h?' hot':''}" stroke="${g.c}" d="${d}" data-n="${g.n}"/>`;
+    if(on && (h || py>=Math.max(1,prog))) etyk.push({y:Y(py),c:g.c,n:g.n,h});
+  }
+  // rozsuwanie etykiet, zeby sie nie zlewaly
+  etyk.sort((a,b)=>a.y-b.y);
+  const MIN=12.5;
+  for(let i=1;i<etyk.length;i++)
+    if(etyk[i].y-etyk[i-1].y<MIN) etyk[i].y=etyk[i-1].y+MIN;
+  const nad=etyk.length?etyk[etyk.length-1].y-(H-PB):0;
+  if(nad>0) etyk.forEach(e=>e.y-=nad);
+  for(const e of etyk){
+    s+=`<text class="axis" x="${X(Math.min(dzien,XMAX))+9}" y="${e.y+3.5}" fill="${e.c}" `+
+       `font-size="10.5" font-weight="${e.h?'600':'400'}">${e.n.length>17?e.n.slice(0,16)+'…':e.n}</text>`;
+  }
+  SVG.innerHTML=s;
+}
+
+function obozy(){
+  const gr={};
+  for(const g of G){ (gr[g.o]=gr[g.o]||[]).push(g); }
+  const kol=['Stary Obóz','Nowy Obóz','Bractwo','Skazańcy','Bez frakcji'].filter(k=>gr[k]);
+  document.getElementById('camps').innerHTML=kol.map(k=>{
+    const l=gr[k], suma=l.reduce((a,g)=>a+g.t,0);
+    const meta=l.filter(g=>g.t>=100).length;
+    const sr=(suma/l.length).toFixed(1).replace('.',',');
+    return `<div class="camp" style="--cc:${OB[k]}">
+      <div class="cn">${k}</div>
+      <div class="cs">${suma.toLocaleString('pl')}<small>treningów</small></div>
+      <div class="cm">${l.length} osób · średnio ${sr} na osobę<br>${meta} × setka</div>
+    </div>`;
+  }).join('');
+}
+
+function kroniki(){
+  const fin=G.filter(g=>g.t>=100&&g.dni!=null).sort((a,b)=>a.dni-b.dni);
+  SA_META = fin.length>0;
+  if(!SA_META){ document.getElementById('roll').innerHTML=''; }
+  document.getElementById('roll').innerHTML=fin.map((g,i)=>{
+    const tyg=(100/(g.dni/7)).toFixed(1).replace('.',',');
+    return `<div class="card" data-n="${g.n}">
+      <div class="rankmark">${i+1}</div>
+      <div class="who"><span class="swatch" style="background:${g.c}"></span>${g.n}</div>
+      <div class="big">${g.dni}<small>dni</small></div>
+      <div class="meta">${g.s} → ${g.d}<br><span class="pace">${tyg} treningu/tydzień</span>${
+        g.t>100?`<br>łącznie <b style="color:var(--ore)">${g.t}</b> treningów`:''}</div>
+    </div>`;
+  }).join('');
+}
+
+function tabela(){
+  const visN=new Set(widoczni().map(g=>g.n));
+  const arr=[...G].sort((a,b)=>{
+    let x=a[sortKey], y=b[sortKey];
+    if(x==null) x=(sortKey==='dni')?1e9:'';
+    if(y==null) y=(sortKey==='dni')?1e9:'';
+    return (x>y?1:x<y?-1:0)*sortDir;
+  });
+  document.getElementById('tbody').innerHTML=arr.map(g=>{
+    const v=stan(g,dzien);
+    return `<tr class="row${visN.has(g.n)?'':' mute'}" data-n="${g.n}">
+      <td class="mono ${v>=100?'done':''}"><b>${v>=100?100:v}</b>${v>100?`<span class="plus">+${v-100}</span>`:''}</td>
+      <td><span class="swatch" style="background:${g.c}"></span>${g.n}</td>
+      <td class="hide-s"><div class="barwrap">`+
+        `<div class="bar" title="${v}/100${v>100?` (+${v-100} ponad cel)`:''}">`+
+        `<i class="${v>=100?'full':''}" style="width:${Math.min(100,v)}%"></i></div>`+
+        `${v>100?`<span class="over" title="${v-100} ponad cel"></span>`:''}</div></td>
+      <td class="hide-s"><span class="tag" style="color:${OB[g.o]};border-color:${OB[g.o]}44">${g.o}</span></td>
+      <td class="mono hide-s" style="color:var(--ash)">${g.s}</td>
+      <td class="mono hide-s tylko-meta${g.dni!=null?' done':''}">${g.dni??'—'}</td>
+      <td class="mono hide-s tylko-meta">${g.d??'—'}</td>
+      <td class="mono hide-s" style="color:var(--ash)">${g.l}</td>
+    </tr>`;
+  }).join('');
+  metaWidocznosc();
+}
+
+function statystyki(){
+  const fin=G.filter(g=>g.t>=100&&g.dni!=null);
+  const suma=G.reduce((a,g)=>a+g.t,0);
+  const tempo=(100/M.dni*7);
+  // ile powinien miec ktos idacy rowno z tempem
+  const cel=Math.round(M.uplynelo/M.dni*100);
+  const naTempie=G.filter(g=>g.t>=cel).length;
+
+  const tiles = fin.length
+    ? [[fin.length,'dobiło setki'],
+       [G.filter(g=>g.t<100&&g.t>=85).length,'u bram'],
+       [[...fin].sort((a,b)=>a.dni-b.dni)[Math.floor(fin.length/2)].dni+' dni','mediana drogi'],
+       [suma.toLocaleString('pl'),'treningów łącznie'],
+       [M.zostalo,'dni do Bariery']]
+    : [[G.length,'uczestników'],
+       [suma.toLocaleString('pl'),'treningów łącznie'],
+       [naTempie,`w tempie (${cel}+)`],
+       [(suma/G.length).toFixed(1).replace('.',','),'średnio na osobę'],
+       [M.zostalo,'dni do Bariery']];
+  document.getElementById('stats').innerHTML=tiles.map(([b,s])=>
+    `<div class="stat"><b>${b}</b><span>${s}</span></div>`).join('');
+
+  document.getElementById('edycja').textContent=
+    'Kronika Kolonii'+(M.edycja?' · '+M.edycja:'');
+  document.getElementById('okres').textContent=
+    `${M.start} — ${M.deadline}${M.pewna?'':' (data orientacyjna)'}  ·  ${M.dni} dni  ·  `+
+    `tempo idealne ${tempo.toFixed(2).replace('.',',')} treningu/tydzień`;
+
+  // koncowka challengeu: kto jeszcze zdazy. Wczesniej: kto trzyma tempo.
+  let lead='';
+  if(M.zostalo<=30){
+    const z=G.filter(g=>g.t<100&&(100-g.t)/Math.max(1,M.zostalo)<=1)
+             .map(g=>`${g.n} (brakuje ${100-g.t})`);
+    if(z.length) lead=`<b>Realnie zdążą przed Barierą:</b> ${z.join(', ')}.<br><br>`;
+  } else {
+    const czolo=[...G].sort((a,b)=>b.t-a.t).slice(0,3).map(g=>`${g.n} (${g.t})`);
+    lead=`<b>Na czele:</b> ${czolo.join(', ')}. Równo z tempem idealnym trzeba dziś mieć `+
+         `około <b>${cel}</b> treningów — ma tyle ${naTempie} z ${G.length} osób.<br><br>`;
+  }
+  document.getElementById('note').innerHTML= lead +
+    (M.pewna?'':`Data larpa nie jest jeszcze potwierdzona — wykres zakłada `+
+      `<b>${M.deadline}</b>, więc linia tempa może się jeszcze lekko przesunąć.<br><br>`)+
+    `Licznik czyta wpisy w formacie <span class="mono">xx/100</span>. Retoryczne wtręty `+
+    `(żartobliwe „100/100”, cytaty w rodzaju „wyszukanie 85/100 daje 24 wyniki”) są odrzucane — `+
+    `zamiast prostego maksimum liczy się najdłuższy rosnący podciąg zgłoszeń. `+
+    `„Dni do setki” to odstęp od pierwszego raportu danej osoby do setnego, więc kto dołączył `+
+    `później, ma krótszą drogę przy wyższym tempie. Treningi zgłaszane samym zdjęciem, bez numeru `+
+    `w treści, mogą nie być policzone.`;
+}
+
+SVG.addEventListener('pointermove',e=>{
+  const t=e.target.closest('.line');
+  if(t){
+    const n=t.dataset.n, g=G.find(x=>x.n===n);
+    if(hot!==n){ hot=n; rysuj(); }
+    const r=SVG.getBoundingClientRect();
+    TIP.innerHTML=`<b>${n}</b><br>${stan(g,dzien)}/100`+
+      (g.dni!=null?`<br><i>setka w ${g.dni} dni</i>`:'');
+    TIP.style.opacity=1;
+    TIP.style.left=Math.min(e.clientX-r.left+14, r.width-TIP.offsetWidth-8)+'px';
+    TIP.style.top=(e.clientY-r.top-44)+'px';
+  } else if(hot){ hot=null; TIP.style.opacity=0; rysuj(); }
+});
+SVG.addEventListener('pointerleave',()=>{ if(hot){hot=null;rysuj();} TIP.style.opacity=0; });
+
+document.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('[data-f]').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on'); filtr=b.dataset.f; rysuj(); tabela();
+});
+document.getElementById('szukaj').oninput=e=>{
+  szukaj=e.target.value.toLowerCase().trim(); rysuj(); tabela();
+};
+document.querySelectorAll('th[data-s]').forEach(th=>th.onclick=()=>{
+  const k=th.dataset.s;
+  if(sortKey===k) sortDir*=-1; else { sortKey=k; sortDir=(k==='n')?1:-1; }
+  document.querySelectorAll('th[data-s]').forEach(x=>x.removeAttribute('aria-sort'));
+  th.setAttribute('aria-sort', sortDir===1?'ascending':'descending');
+  tabela();
+});
+function podswietl(e){
+  const el=e.target.closest('[data-n]');
+  if(el && hot!==el.dataset.n){ hot=el.dataset.n; rysuj(); }
+}
+document.getElementById('tbody').addEventListener('pointerover',podswietl);
+document.getElementById('roll').addEventListener('pointerover',podswietl);
+[document.getElementById('tbody'),document.getElementById('roll')].forEach(el=>
+  el.addEventListener('pointerleave',()=>{ if(hot){hot=null;rysuj();} }));
+
+const sl=document.getElementById('dzien'), out=document.getElementById('dataOut');
+sl.max=UPLYW; sl.value=UPLYW;
+function odswiezDate(){
+  const d=new Date(M.start); d.setDate(d.getDate()+ +sl.value);
+  out.textContent=d.toISOString().slice(0,10);
+}
+sl.oninput=()=>{ dzien=+sl.value; odswiezDate(); rysuj(); tabela(); };
+
+document.querySelectorAll('#zakresy [data-z]').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('#zakresy [data-z]').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on'); zakres=b.dataset.z; skala(); rysuj();
+});
+document.querySelectorAll('#zakresy [data-z]').forEach(b=>
+  b.classList.toggle('on', b.dataset.z===zakres));
+
+odswiezDate(); statystyki(); obozy(); kroniki(); rysuj(); tabela(); metaWidocznosc();
+</script>
+</body>
+</html>
